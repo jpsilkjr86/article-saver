@@ -11,6 +11,39 @@
 	<title>Article Saver</title>
 </head>
 <body>
+	<nav class="navbar navbar-default">
+		<div class="container">
+			<!-- Brand and toggle grouped for better mobile display -->
+			<div class="navbar-header">
+				<!-- toggle menu for mobile screens -->
+				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-menu" aria-expanded="false">
+					<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="/">Article Saver</a>
+			</div> <!-- end of navbar-header -->
+			<!-- Collect the nav links, forms, and other content for toggling -->
+			<div class="collapse navbar-collapse" id="navbar-menu">
+				<!-- Right-floating navbar  -->
+				<ul class="nav navbar-nav navbar-right">
+					<li class="active"><a href="/">Home<span class="sr-only">(current)</span></a></li>
+					<li><a href="#">Saved Articles</a></li>
+					<form class="navbar-form navbar-left">
+						<div class="form-group">
+							<div class="input-group">
+								<input type="text" class="form-control" placeholder="Search">
+								<div class="input-group-btn">
+									<button type="submit" class="btn btn-default" id="search-btn"><i class="glyphicon glyphicon-search"></i></button>
+								</div> <!-- end of button div-->
+							</div> <!-- end of input group -->						
+						</div> <!-- end of form group -->
+					</form> <!-- end of search input form -->
+				</ul> <!-- end of navbar-right -->
+			</div><!-- end of navbar-collapse -->
+		</div><!-- end of container -->
+	</nav> <!-- end of nav -->
 	<div class="container">
 		<div class="jumbotron" id="jumbotron-bkg">
 			<h1>Article Saver</h1>
