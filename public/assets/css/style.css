@@ -1,0 +1,10 @@
+#jumbotron-bkg {
+	/*background-image: url("/assets/img/burger.jpg");*/
+	text-align: center;
+	position: relative;
+	background-position: center;
+	background-size: cover;
+	color: #eee;
+	font-size: 4em;
+	text-shadow: 2px 2px 2px #111;
+}
