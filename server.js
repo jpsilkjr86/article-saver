@@ -40,7 +40,7 @@ app.set("view engine", "handlebars");
 		console.log('App listening on port ' + port);
 		// sets up routes
 		require('./controllers/html-routes.js')(app);
-		// require('./controllers/api-routes.js')(app, db);
+		require('./controllers/api-routes.js')(app);
 	});
 
 // server connection error handling
