@@ -23,8 +23,8 @@ module.exports = (app) => {
 				res.json({results: [], responseMsg: "Search did not yield any results"});
 			} // else server responds by sending results back as json object
 			else {
-				console.log('RESULTS FOUND! NUMBER OF ARTICLES: ' + results.length)
-				res.json(results);
+				console.log('RESULTS FOUND! NUMBER OF ARTICLES: ' + results.length);
+				res.json({results: results, responseMsg: "Number of Articles Found: " + results.length});
 			}
 		}).catch((err) => {
 			console.log('ERROR SEARCHING WITH ARTICLE SAVER');
