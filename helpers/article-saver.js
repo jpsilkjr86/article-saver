@@ -46,31 +46,39 @@ const articleSaver = {
 	}, // end of .searchCNN
 	// searchNYT function
 	searchNYT: (query) => {
-		// returns promise object
+		// returns promise object, which uses phantom to open page and grab dynamically generated content
 		return new Promise ( (resolve, reject) => {
-			// uses phantom to open page and grab dynamically generated content
-			
-			var sitepage = null;
-			var phInstance = null;
-
+			// instantiates locally scoped variables that will persist through promise chain
+			let sitepage = null;
+			let phInstance = null;
+			// creates phantom instance
 			phantom.create().then(function(instance) {
+				// saves instance as persistent variable
 				phInstance = instance;
+				// creates a page in phantom engine
 				return instance.createPage();
 			}).then(function(page) {
+				// saves the page as persistent variable
 				sitepage = page;
+				// builds url string
 				let nytQueryUrl = 'https://query.nytimes.com/search/sitesearch/'
 					+ '?action=click&contentCollection&region=TopBar&WT.nav=searchWidget'
 					+ '&module=SearchSubmit&pgtype=Homepage#/' + query;
+				// opens url
 				return page.open(nytQueryUrl);
 			}).then(function() {
+				// checks to make sure the document is ready before evaluating its html
+				return articleSaver.onReadyState(sitepage);
+			}).then(function(){
+				// evaluates the site page and returns its html
 				return sitepage.evaluate(function() {
-					return document.body.innerHTML;
+					return document.documentElement.outerHTML;
 				});
 			}).then(function(html){
 				// instantiates locally-scoped results array, to be returned in resolve later
 				const results = [];
 				// loads HTML into cheerio and saves it as a variable
-				var $ = cheerio.load(html);
+				let $ = cheerio.load(html);
 				// loops through each article on the site
 				$('li.story').each(function(i, element) {
 					// instantiates locally scoped article object
@@ -82,15 +90,18 @@ const articleSaver = {
 						by: $(element).find('div.element2').find('span.byline').text(),
 						thumbnail: $(element).find('div.element1').find('img.story_thumb').attr('src')
 					};
-					// pushes article object onto results array
+					// pushes each article object onto results array
 					results.push(article);
 				});
-				console.log(results);
-				resolve(results);
+				// exits phantom instance
 				phInstance.exit();
+				// resolves with results array
+				resolve(results);
 			}).catch(function(error) {
 				console.log(error);
+				// exits phantom instance
 				phInstance.exit();
+				// rejects with error
 				reject(error);
 			});
 
@@ -179,7 +190,37 @@ const articleSaver = {
 
 			// }); // end of request
 		}); // end of Promise
-	} // end of .searchNYT
+	}, // end of .searchNYT
+	// helper function that works with phantom to ensure the document is fully loaded before proceeding
+	onReadyState: (page) => {
+		return new Promise ((resolve, reject) => {
+			// checkReady is a function that calls itself recursively to make sure the document is ready
+			const checkReady = (page) => {
+				// setTimeout for allowing slight delay
+				setTimeout(function() {
+					// evaluates just the page's readyState property
+					page.evaluate(function() {
+						return document.readyState;
+					}).then(function(readyState) {
+						console.log('readyState:' + readyState);
+						if (readyState === 'complete') {
+							// resolves when readyState === 'complete'
+							return resolve();
+						}
+						else {
+							// check again if readyState is complete
+							checkReady(page);
+						}
+					}).catch(function(err) {
+						console.log(err);
+						return reject(err);
+					});
+				}, 4);
+			};
+			// call checkReady
+			checkReady(page);
+		});
+	}
 };
 
 module.exports = articleSaver;

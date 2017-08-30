@@ -25,6 +25,7 @@ module.exports = (app) => {
 			else {
 				console.log('RESULTS FOUND! NUMBER OF ARTICLES: ' + results.length);
 				res.json({results: results, responseMsg: "Number of Articles Found: " + results.length});
+				// res.send(results);
 			}
 		}).catch((err) => {
 			console.log('ERROR SEARCHING WITH ARTICLE SAVER');
