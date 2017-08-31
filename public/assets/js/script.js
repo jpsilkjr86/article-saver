@@ -42,12 +42,18 @@ $(document).ready(function(){
 							.appendTo(colMain);
 			// add clearfix to clear floats
 			$('<div>').addClass('clearfix').appendTo(colMain);
-			// add bookmark button to the right
-			let saveBtn = $('<button>').addClass('btn btn-default');
+			// add bookmark button to the right-hand column
+			let saveBtn = $('<button>').addClass('btn btn-default btn-sm article-btn');
 			$('<span>').addClass('glyphicon glyphicon-bookmark')
 					.attr('aria-hidden', 'true')
 					.appendTo(saveBtn);
 			saveBtn.appendTo(colRight);
+			// add comment button to the right-hand column
+			let commentBtn = $('<button>').addClass('btn btn-default btn-sm article-btn');
+			$('<span>').addClass('glyphicon glyphicon-comment')
+					.attr('aria-hidden', 'true')
+					.appendTo(commentBtn);
+			commentBtn.appendTo(colRight);
 			// finally, append articleDiv to the DOM
 			$('#articles-div').prepend(articleDiv);
 		}
