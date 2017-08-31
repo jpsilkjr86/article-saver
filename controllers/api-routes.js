@@ -15,7 +15,7 @@ module.exports = (app) => {
 
 		// sends query string to helper function searching nytimes,
 		// which returns a promise with results in the callback
-		articleSaver.searchNYT(queryStr).then((results) => {
+		articleSaver.nytimes.search(queryStr).then((results) => {
 			console.log(results);
 			// if no results, tells user that their search did not yield results.
 			if (!results || !results.length) {
