@@ -8,3 +8,15 @@
 	font-size: 4em;
 	text-shadow: 2px 2px 2px #111;
 }
+
+.article-thumb {
+	width: 100%;
+}
+
+#articles-div h4 {
+	font-size: 1.3em;
+}
+
+#articles-div p {
+	font-size: .8em;
+}
