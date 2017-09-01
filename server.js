@@ -13,7 +13,19 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 // ================ Mongoose Configuration ================
+// importing models
+const Article = require("./models/Article.js"),
+	Comment = require("./models/Comment.js"),
+	User = require("./models/User.js");
 
+// configure mongoose promises to ES6 Promises
+mongoose.Promise = Promise;
+// set database configuration
+mongoose.connect("mongodb://localhost/article-saver", {
+ 	useMongoClient: true
+});
+// save connection as variable
+const db = mongoose.connection;
 
 // ================ Express Configuration ================
 // Configures Express and body parser
@@ -33,16 +45,19 @@ app.engine("handlebars", exphbs({ defaultLayout: "main" }));
 app.set("view engine", "handlebars");
 
 // ================ Connection Establishment ================
-// attempts to establish connection to mongoose db
+// show any mongoose connection errors
+db.on("error", function(error) {
+ 	console.log("Mongoose Error: ", error);
+});
 
-	// listens to port for running server
+// attempts to establish connection to mongoose db
+db.once("open", function() {
+	console.log("Mongoose connection successful.");
+	// listens to port for running server within mongoose connection callback
 	app.listen(port, () => {
 		console.log('App listening on port ' + port);
 		// sets up routes
 		require('./controllers/html-routes.js')(app);
 		require('./controllers/api-routes.js')(app);
 	});
-
-// server connection error handling
-	// console.log('Error: Failed to establish connection with MySQL.');
-	
+});

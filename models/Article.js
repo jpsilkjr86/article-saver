@@ -5,29 +5,16 @@ var Schema = mongoose.Schema;
 
 // Create Article schema
 var ArticleSchema = new Schema({
-  headline: {
-    type: String,
-    required: true
-  },
-  link: {
-    type: String,
-    required: true,
-    unique: true
-  },
+  headline: { type: String, required: true },
+  link: { type: String, required: true, unique: true },
   thumbnail: String,
   summary: String,
   date: Date,
   by: String,
   // references Comment model, as array
-  comments: [{
-    type: Schema.Types.ObjectId,
-    ref: "Comment"
-  }],
+  comments: [{ type: Schema.Types.ObjectId, ref: "Comment" }],
   // refers to which users are saving the article
-  savers: [{
-    type: Schema.Types.ObjectId,
-    ref: "User"
-  }]
+  savers: [{ type: Schema.Types.ObjectId, ref: "User" }]
 });
 
 // Create the Article model with the ArticleSchema

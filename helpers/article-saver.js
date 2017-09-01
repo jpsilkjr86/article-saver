@@ -97,7 +97,7 @@ const articleSaver = {
 					// loads HTML into cheerio and saves it as a variable
 					let $ = cheerio.load(html);
 					// loops through each article on the site
-					$('li.story').not('.spotlight').each(function(i, element) {
+					$('li.story').not('.spotlight').not('.noResultsFound').each(function(i, element) {
 						// instantiates locally scoped article object
 						let article = {
 							headline: $(element).find('div.element2').find('h3').text(),
@@ -114,12 +114,21 @@ const articleSaver = {
 					resolve(results);
 				}).catch(function(error) {
 					console.log(error);
-					// rejects with error
 					reject(error);
 				});
 			}); // end of Promise
 		} // end of articleSaver.nytimes.search
-	} // end of articleSaver.nytimes		
+	}, // end of articleSaver.nytimes
+	// sub-object for housing database helper functions
+	db: {
+		// function for syncing articles with database
+		sync: (results) => {
+			// returns promise that resolves with articles synced with database
+			return new Promise ( (resolve, reject) => {
+				resolve(results);
+			});
+		}
+	}
 }; // end of articleSaver
 
 module.exports = articleSaver;

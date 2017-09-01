@@ -5,27 +5,12 @@ var Schema = mongoose.Schema;
 
 // Create comment schema
 var CommentSchema = new Schema({
-  title: {
-    type: String,
-    required: true
-  },
-  body: {
-    type: String,
-    required: true
-  },
-  date: {
-    type: Date,
-    default: Date.now 
-  },
+  title: { type: String, required: true },
+  body: { type: String, required: true },
+  date: { type: Date, default: Date.now },
   // references Article model
-  article: {
-    type: Schema.Types.ObjectId,
-    ref: "Article"
-  },
-  user: {
-    type: Schema.Types.ObjectId,
-    ref: "User"
-  }
+  article: { type: Schema.Types.ObjectId, ref: "Article" },
+  user: { type: Schema.Types.ObjectId, ref: "User" }
 });
 
 // Create the Comment model with the CommentSchema
