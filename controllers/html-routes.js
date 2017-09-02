@@ -20,7 +20,7 @@ module.exports = (app) => {
 		}
 	});
 	// route for savedarticles page. if not signed in, redirect to signin page
-	app.get('/savedarticles', (req, res) => {
+	app.get('/articles/saved', (req, res) => {
 		if (req.user) {
 			res.render('savedarticles', {script: 'savedarticles.js', user: req.user});
 		} else {
@@ -28,16 +28,15 @@ module.exports = (app) => {
 			res.redirect('/signin');
 		}
 	});
-	// // route for signing in as guest
-	// app.get('/signin/guest', (req, res) => {
-	// 	if (req.user) {
-	// 		console.log('Already logged in as user ' + req.user.username + '');
-	// 		res.redirect('/');
-	// 	} else {
-	// 		res.render('signin', {script: 'signin.js'});
-	// 	}
-	// });
-
+	// route for savedarticles page. if not signed in, redirect to signin page
+	app.get('/articles/:id/comment', (req, res) => {
+		if (req.user) {
+			res.send(req.params.id);
+		} else {
+			console.log('No logged-in user found. Redirecting to signin page...');
+			res.redirect('/signin');
+		}
+	});
 	// logs user out of site, deleting them from the session, and returns to signin page
 	app.get('/logout', (req, res) => {
 		if (req.user) {

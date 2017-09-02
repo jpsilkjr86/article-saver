@@ -10,7 +10,7 @@ $(document).ready(function(){
 	}
 	// function that performs ajax request to get saved articles from server
 	function getSavedArticles () {
-		$.get('/savedarticles/all').done(function(data) {
+		$.get('/articles/saved/all').done(function(data) {
 			console.log(data);
 			displayArticles(data.results);
 		});

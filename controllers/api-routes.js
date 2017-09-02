@@ -94,9 +94,8 @@ module.exports = (app, passport) => {
 
 		});
 	});
-
-	// get route for retrieving saved articles
-	app.get('/savedarticles/all', (req, res) => {
+	// get route for retrieving saved articles in json
+	app.get('/articles/saved/all', (req, res) => {
 		// early returns if no user exists in session
 		if (!req.user) {
 			console.log('NO USER LOGGED IN. REDIRECTING TO SIGNIN PAGE...');
@@ -118,32 +117,22 @@ module.exports = (app, passport) => {
 			});
 		});			
 	}); // end of app.get('/search')
-};
-
-
-
-		/*
-		// get user by id, findOneAndUpdate
-		User.findOne({_id: req.user._id}, (err1, thisUser) => {
-			if (err1) {
-				console.log(err1);
-				return res.json(err1);
+	// get route for retrieving article data in json
+	app.get('/articles/:id', (req, res) => {
+		// early returns if no user exists in session
+		if (!req.user) {
+			console.log('NO USER LOGGED IN. REDIRECTING TO SIGNIN PAGE...');
+			return res.redirect('/siginin');
+		}
+		Article.findById(req.params.id).exec().then(article => {
+			if (!article) {
+				return res.send('No article found by id: ' + req.params.id);
 			}
-			Article.findOne({_id: articleId}, (err2, article) => {
-				if (err2) {
-					console.log(err2);
-					return res.json(err2);
-				}
-				// push article onto user's saved articles array
-				User.update
-				// push user onto article's savers array
-
-				thisUser.saved_articles.push(article);
-				article.savers.push(thisUser);
-				thisUser.save();
-				article.save();
-				res.send('Article successfully saved!');
-				console.log('ARTICLE SAVED!');
-			});
-		});
-		*/
+			res.json(article);
+		}).catch((err) => {
+			console.log('SERVER ERROR: UNABLE TO LOCATE ARTICLE.');
+			console.log(err);
+			res.send('Server error: unable to locate article.');
+		});			
+	});
+};
