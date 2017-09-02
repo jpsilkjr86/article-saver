@@ -1,12 +1,15 @@
-#jumbotron-bkg {
+.jumbotron-bkg {
 	background-image: url("/assets/images/office.jpg");
-	text-align: center;
 	position: relative;
 	background-position: center;
 	background-size: cover;
+}
+
+.jumbotron-bkg h1 {
 	color: #eee;
 	font-size: 4em;
 	text-shadow: 2px 2px 2px #111;
+	text-align: center;	
 }
 
 .article-thumb {
