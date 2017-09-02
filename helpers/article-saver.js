@@ -128,6 +128,39 @@ const articleSaver = {
 	db: {
 		// function for syncing articles with database
 		sync: (results) => {
+			// declared upsertArticlePromises as temp array
+			const upsertArticlePromises = [];
+			// loop through results and builds array of promises for saving articles to database
+			for (let i = 0; i < results.length; i++) {
+				// generate new promise for each article and pushes them onto upsertArticlePromises
+				upsertArticlePromises.push( new Promise ( (resolve, reject) => {
+					let query = {link: results[i].link};
+					let newData = {
+						headline: results[i].headline,
+						thumbnail: results[i].thumbnail,
+						summary: results[i].summary,
+						by: results[i].by,
+						date: results[i].date
+					};
+					// ensures that article is upserted, the doc in callback reflects 
+					// updated data, and defaults are set upon upsert (usually doesnt happen)
+					// https://stackoverflow.com/questions/25755521/mongoose-upsert-does-not-create-default-schema-property
+					let options = {upsert: true, new: true, setDefaultsOnInsert: true};
+					// upsert document
+					Article.findOneAndUpdate(query, newData, options, (err, doc) => {
+						if (err) {
+							reject(err);
+						}
+						else {
+							resolve(doc);
+						}
+					});
+				}));
+			}
+			// returns Promise.all of upsertArticlePromises array
+			return Promise.all(upsertArticlePromises);
+
+			/*
 			// returns promise that resolves with articles synced with database
 			return new Promise ( (resolve, reject) => {
 				const syncedArticles = [];
@@ -170,46 +203,9 @@ const articleSaver = {
 					reject(err);
 				});
 			}); // end of returned promise
+			*/
 		} // end of articleSaver.db.sync
 	} // end of articleSaver.db sub-object
 }; // end of articleSaver
 
 module.exports = articleSaver;
-
-
-
-				/*
-		// other alternative: generate a new promise for each article that pushes doc onto syncedArticles,
-		// then use Promise.all()
-		sync: (results) => {
-			return new Promise ( (resolve, reject) => {
-				const syncedArticles = [];
-				const articlePromises = [];
-
-				// loop through results.
-					// generate new promise for each one and push onto articlePromises
-
-				Promise.all(articlePromises).then((values) => {
-					
-				}).catch((err) => {
-	
-				});
-					
-
-			});
-
-
-
-						// let entry = new Article(results[i]);
-						// entry.save((err, doc) => {
-						// 	if (err) {
-						// 		console.log(err);
-						// 		rejectArticle(err);
-						// 	}
-						// 	else {
-						// 		// pushes successfully saved doc onto syncedArticles and resolves
-						// 		syncedArticles.push(doc);
-						// 		resolveArticle();
-						// 	}
-						// });
-		} */
