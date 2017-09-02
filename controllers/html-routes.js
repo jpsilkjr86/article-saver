@@ -19,6 +19,15 @@ module.exports = (app) => {
 			res.render('signin', {script: 'signin.js'});
 		}
 	});
+	// route for savedarticles page. if not signed in, redirect to signin page
+	app.get('/savedarticles', (req, res) => {
+		if (req.user) {
+			res.render('savedarticles', {script: 'savedarticles.js', user: req.user});
+		} else {
+			console.log('No logged-in user found. Redirecting to signin page...');
+			res.redirect('/signin');
+		}
+	});
 	// // route for signing in as guest
 	// app.get('/signin/guest', (req, res) => {
 	// 	if (req.user) {

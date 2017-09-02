@@ -94,6 +94,30 @@ module.exports = (app, passport) => {
 
 		});
 	});
+
+	// get route for retrieving saved articles
+	app.get('/savedarticles/all', (req, res) => {
+		// early returns if no user exists in session
+		if (!req.user) {
+			console.log('NO USER LOGGED IN. REDIRECTING TO SIGNIN PAGE...');
+			return res.redirect('/siginin');
+		}
+		User.findById(req.user._id).populate('saved_articles').exec().then(thisUser => {
+			console.log('RESULTS FOUND! NUMBER OF SAVED ARTICLES: ' + thisUser.saved_articles.length);
+			console.log('SENDING ARTICLES BACK TO USER...');
+			res.json({
+				results: thisUser.saved_articles,
+				responseMsg: "Number of Articles Found: " + thisUser.saved_articles.length
+			});
+		}).catch((err) => {
+			console.log('SERVER ERROR: UNABLE TO LOCATE SAVED ARTICLES.');
+			console.log(err);
+			res.json({
+				results: [],
+				responseMsg: "Server error: Unable to locate saved articles."
+			});
+		});			
+	}); // end of app.get('/search')
 };
 
 
