@@ -13,11 +13,6 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 // ================ Mongoose Configuration ================
-// importing models
-const Article = require('./models/Article.js'),
-	Comment = require('./models/Comment.js'),
-	User = require('./models/User.js');
-
 // configure mongoose promises to ES6 Promises
 mongoose.Promise = Promise;
 // set database configuration
