@@ -5,7 +5,14 @@
 			<div class="well">
 				<button type="button" class="btn btn-info btn-md btn-block" id="signin-btn" disabled="disabled">Sign In</button>
 				<button type="button" class="btn btn-success btn-md btn-block" id="newacct-btn" disabled="disabled">New Account</button>
-				<button type="button" class="btn btn-warning btn-md btn-block" id="guest-btn">Join As Guest</button>
+				<form action="/user/guest" method="post" style="margin-top: 5px">
+					<input type="hidden" name="username" value="guest">
+					<input type="hidden" name="password" value="guest">
+					<!-- <input type="hidden" name="email" value="guest@website.com">
+					<input type="hidden" name="first_name" value="guest"> -->
+					<button type="submit" class="btn btn-warning btn-md btn-block" id="guest-btn">Join As Guest</button>
+				</form>
+				<!-- <button type="button" class="btn btn-warning btn-md btn-block" id="guest-btn">Join As Guest</button> -->
 			</div>			
 		</div>
 	</div>

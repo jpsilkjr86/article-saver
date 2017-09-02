@@ -47,6 +47,18 @@
 		</div><!-- end of container -->
 	</nav> <!-- end of nav -->
 	<div class="container">
+	{{#if error}}
+      <p class="alert alert-warning text-center">{{error}}</p>
+    {{/if}}
+
+    {{#if success}}
+      <p class="alert alert-success text-center">{{success}}</p>
+    {{/if}}
+
+    {{#if notice}}
+      <p class="alert alert-info text-center">{{notice}}</p>
+    {{/if}}
+
 	{{{ body }}}
 	</div>
 
