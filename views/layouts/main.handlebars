@@ -24,12 +24,11 @@
 				</button>
 				<a class="navbar-brand" href="/">Article Saver</a>
 			</div> <!-- end of navbar-header -->
+			{{#if user}}
 			<!-- Collect the nav links, forms, and other content for toggling -->
 			<div class="collapse navbar-collapse" id="navbar-menu">
 				<!-- Right-floating navbar  -->
 				<ul class="nav navbar-nav navbar-right">
-					<li class="active"><a href="/">Home<span class="sr-only">(current)</span></a></li>
-					<li><a href="#">Saved Articles</a></li>
 					<form class="navbar-form navbar-left">
 						<div class="form-group">
 							<div class="input-group">
@@ -40,8 +39,11 @@
 							</div> <!-- end of input group -->						
 						</div> <!-- end of form group -->
 					</form> <!-- end of search input form -->
+					<li><a href="#">Saved Articles</a></li>
+					<li><a href="/logout">Log Out</a></li>
 				</ul> <!-- end of navbar-right -->
 			</div><!-- end of navbar-collapse -->
+			{{/if}}
 		</div><!-- end of container -->
 	</nav> <!-- end of nav -->
 	<div class="container">

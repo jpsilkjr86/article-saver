@@ -4,7 +4,7 @@ module.exports = (app) => {
 	app.get('/', (req, res) => {
 		if (req.user) {
 			console.log('Logged in as user ' + req.user.username + '');
-			res.render('index', {script: 'index.js'});
+			res.render('index', {script: 'index.js', user: req.user});
 		} else {
 			console.log('No logged-in user found. Redirecting to signin page...');
 			res.redirect('/signin');
