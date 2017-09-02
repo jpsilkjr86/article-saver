@@ -50,4 +50,9 @@ module.exports = (app, passport) => {
 		successRedirect: '/',
 		failureRedirect: '/signin'
 	}));
+	// route for signing in as guest.
+	app.post('/user/guest', passport.authenticate('local-signin', {
+		successRedirect: '/',
+		failureRedirect: '/signin'
+	}));
 };
