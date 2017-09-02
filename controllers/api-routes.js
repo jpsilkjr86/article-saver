@@ -1,5 +1,11 @@
 // dependencies: articleSaver helper functions
 const articleSaver = require('../helpers/article-saver.js');
+
+// importing database models (mongoose)
+const Article = require('../models/Article.js'),
+	Comment = require('../models/Comment.js'),
+	User = require('../models/User.js');
+
 // exports as function which takes in app as parameter
 module.exports = (app, passport) => {
 	// get route for search
@@ -59,4 +65,61 @@ module.exports = (app, passport) => {
 	// 	successRedirect: '/',
 	// 	failureRedirect: '/signin'
 	// }));
+
+	// route for letting users save articles
+	app.post('/save', (req, res) => {
+		// early return if there's no user logged in
+		if (!req.user) {
+			console.log('Cannot save aritcle - No user logged in.');
+			return res.send('Cannot save aritcle - No user logged in.');
+		}
+		let articleId = req.body._id;
+		let userId = req.user._id;
+		console.log('SAVING ARTICLE ' + articleId + ' for user...');
+
+		User.update({_id: userId}, { $push: { saved_articles: articleId } }, (err1, data) => {
+			if (err1) {
+				console.log(err1);
+				return res.send('Server error. Unable to save article.');
+			}
+			console.log("PUSHED ONTO USER'S SAVED ARTICLES!");
+			Article.update({_id: articleId}, { $push: { savers: userId } }, (err2, data) => {
+				if (err2) {
+					console.log(err2);
+					return res.send("Server error. Unable to add user to article's savers.");
+				}
+				console.log("PUSHED ONTO ARTICLE'S SAVERS!");
+				res.send('Article successfully saved!');
+			});
+
+		});
+	});
 };
+
+
+
+		/*
+		// get user by id, findOneAndUpdate
+		User.findOne({_id: req.user._id}, (err1, thisUser) => {
+			if (err1) {
+				console.log(err1);
+				return res.json(err1);
+			}
+			Article.findOne({_id: articleId}, (err2, article) => {
+				if (err2) {
+					console.log(err2);
+					return res.json(err2);
+				}
+				// push article onto user's saved articles array
+				User.update
+				// push user onto article's savers array
+
+				thisUser.saved_articles.push(article);
+				article.savers.push(thisUser);
+				thisUser.save();
+				article.save();
+				res.send('Article successfully saved!');
+				console.log('ARTICLE SAVED!');
+			});
+		});
+		*/

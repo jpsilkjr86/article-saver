@@ -43,13 +43,17 @@ $(document).ready(function(){
 			// add clearfix to clear floats
 			$('<div>').addClass('clearfix').appendTo(colMain);
 			// add bookmark button to the right-hand column
-			let saveBtn = $('<button>').addClass('btn btn-default btn-sm article-btn');
+			let saveBtn = $('<button>')
+							.addClass('btn btn-default btn-sm article-btn save-btn')
+							.attr('data-id', articles[i]._id);
 			$('<span>').addClass('glyphicon glyphicon-bookmark')
 					.attr('aria-hidden', 'true')
 					.appendTo(saveBtn);
 			saveBtn.appendTo(colRight);
 			// add comment button to the right-hand column
-			let commentBtn = $('<button>').addClass('btn btn-default btn-sm article-btn');
+			let commentBtn = $('<button>')
+							.addClass('btn btn-default btn-sm article-btn comment-btn')
+							.attr('data-id', articles[i]._id);
 			$('<span>').addClass('glyphicon glyphicon-comment')
 					.attr('aria-hidden', 'true')
 					.appendTo(commentBtn);
@@ -74,5 +78,13 @@ $(document).ready(function(){
 		// calls search function
 		search(query);
 	});
-	// listener for entering return, triggering search-btn click
+	// listener for clicking on save-btn, posting ajax request to article by id
+	$(document).on('click', '.save-btn', function() {
+		let _id = $(this).attr('data-id');
+		$.post('/save/', {_id}).done(function(data){
+			console.log(data);
+		}).fail(function(err){
+			console.log(err);
+		});
+	});
 });
