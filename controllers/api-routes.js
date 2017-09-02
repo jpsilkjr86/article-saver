@@ -1,7 +1,7 @@
 // dependencies: articleSaver helper functions
 const articleSaver = require('../helpers/article-saver.js');
 // exports as function which takes in app as parameter
-module.exports = (app) => {
+module.exports = (app, passport) => {
 	// get route for search
 	app.get('/search', (req, res) => {
 		// early returns if no search is specified
@@ -38,5 +38,16 @@ module.exports = (app) => {
 			}
 			res.json({results: [], responseMsg: responseMsg});
 		}); // end of promise chain
-	}); // end of app.get('/search') 
+	}); // end of app.get('/search')
+
+	// route for signing up new users. authenticates with passport local strategy 'local-signup'
+	app.post('/user/new', passport.authenticate('local-signup', {
+		successRedirect: '/',
+		failureRedirect: '/signin'
+	}));
+	// route for signing in. authenticates with passport local strategy 'local-signin'
+	app.post('/user/signin', passport.authenticate('local-signin', {
+		successRedirect: '/',
+		failureRedirect: '/signin'
+	}));
 };

@@ -2,6 +2,12 @@
 module.exports = (app) => {
 
 	app.get('/', (req, res) => {
-		res.render('index');
+		if (req.user) {
+			console.log('Logged in as user ' + req.user.username + '');
+			res.render('index');
+		} else {
+			console.log('No logged-in user found. Redirecting to signin page...');
+			res.redirect('/signin');
+		}
 	});
 };
