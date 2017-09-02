@@ -155,8 +155,8 @@ const articleSaver = {
 							resolve(doc);
 						}
 					});
-				}));
-			}
+				})); // end of pushed promise
+			} // end of for-loop
 			// returns Promise.all of upsertArticlePromises array
 			return Promise.all(upsertArticlePromises);
 
