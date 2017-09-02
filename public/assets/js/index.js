@@ -32,8 +32,6 @@ $(document).ready(function(){
 			// declare summary, append under headline
 			let summary = $('<p>').text(articles[i].summary).appendTo(colMain);
 			// declare byline and date next to each other
-			// let additionalInfo = $('<i>').text(articles[i].by + '|' + articles[i].date)
-			// 						.appendTo(colMain);
 			let byline = $('<p>').addClass('pull-left')
 							.text(articles[i].by)
 							.appendTo(colMain);
@@ -51,8 +49,9 @@ $(document).ready(function(){
 					.appendTo(saveBtn);
 			saveBtn.appendTo(colRight);
 			// add comment button to the right-hand column
-			let commentBtn = $('<button>')
+			let commentBtn = $('<a>')
 							.addClass('btn btn-default btn-sm article-btn comment-btn')
+							.attr('href', '/articles/' + articles[i]._id + '/comment')
 							.attr('data-id', articles[i]._id);
 			$('<span>').addClass('glyphicon glyphicon-comment')
 					.attr('aria-hidden', 'true')

@@ -51,8 +51,9 @@ $(document).ready(function(){
 			// add clearfix to clear floats
 			$('<div>').addClass('clearfix').appendTo(colMain);
 			// add comment button to the right-hand column
-			let commentBtn = $('<button>')
+			let commentBtn = $('<a>')
 							.addClass('btn btn-default btn-sm article-btn comment-btn')
+							.attr('href', '/articles/' + articles[i]._id + '/comment')
 							.attr('data-id', articles[i]._id);
 			$('<span>').addClass('glyphicon glyphicon-comment')
 					.attr('aria-hidden', 'true')
