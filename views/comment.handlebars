@@ -1,0 +1,38 @@
+<div class="jumbotron jumbotron-bkg">
+	<h1>Article Comments</h1>
+</div>
+<div class="row">
+	<div class="col-xs-12">
+		<div class="list-group" id="articles-div" data-id="{{article._id}}"></div>
+	</div>
+</div>
+			<!--
+			{{#if article}}
+			<a class="list-group-item">
+				<div class="row">
+					<div class="col-xs-3 col-md-2">
+						<a href="{{article.link}}">
+							<img src="{{article.thumbnail}}" class="img-responsive article-thumb"/>
+						</a>
+					</div>
+					<div class="col-xs-7 col-md-9">
+						<a href="{{article.link}}">
+							<h4 style="font-weight: bold">{{article.headline}}</h4>
+						</a>
+						<p>{{article.summary}}</p>
+						<p class="pull-left">{{article.by}}</p>
+						<p class="pull-right">{{article.date}}</p>
+						<div class="clearfix"></div>
+					</div>
+					<div class="col-xs-2 col-md-1">
+						<button class="btn btn-default btn-sm article-btn save-btn" data-id="{{article._id}}">
+							<span class="glyphicon glyphicon-bookmark" aria-hidden="true"></span>
+						</button>
+						<a class="btn btn-default btn-sm article-btn comment-btn" href="/articles/{{article._id}}/comment" data-id="{{article._id}}">
+							<span class="glyphicon glyphicon-comment" aria-hidden="true"></span>
+						</a>
+					</div>
+				</div>
+			</a>
+			{{/if}}
+			-->
