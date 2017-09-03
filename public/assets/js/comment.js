@@ -14,8 +14,7 @@ $(document).ready(function(){
 		// divide parent article element into three columns
 		let row = $('<div>').addClass('row').appendTo(articleDiv),
 			colLeft = $('<div>').addClass('col-xs-3 col-md-2').appendTo(row),
-			colMain = $('<div>').addClass('col-xs-7 col-md-9').appendTo(row),
-			colRight = $('<div>').addClass('col-xs-2 col-sm-1').appendTo(row);
+			colMain = $('<div>').addClass('col-xs-9 col-md-10').appendTo(row);
 		// put thumb in left column, wrapped in <a> tag
 		let thumb = $('<img>').attr('src', article.thumbnail)
 						.addClass('img-responsive article-thumb');
@@ -31,23 +30,12 @@ $(document).ready(function(){
 		// declare summary, append under headline
 		let summary = $('<p>').text(article.summary).appendTo(colMain);
 		// declare byline and date next to each other
-		let byline = $('<p>').addClass('pull-left')
-						.text(article.by)
+		let byline = $('<p>').text(article.by)
 						.appendTo(colMain);
-		let date = $('<p>').addClass('pull-right')
-						.text(article.date)
+		let date = $('<p>').text(article.date)
 						.appendTo(colMain);
 		// add clearfix to clear floats
 		$('<div>').addClass('clearfix').appendTo(colMain);
-		// add comment button to the right-hand column
-		let commentBtn = $('<a>')
-						.addClass('btn btn-default btn-sm article-btn comment-btn')
-						.attr('href', '/articles/' + article._id + '/comment')
-						.attr('data-id', article._id);
-		$('<span>').addClass('glyphicon glyphicon-comment')
-				.attr('aria-hidden', 'true')
-				.appendTo(commentBtn);
-		commentBtn.appendTo(colRight);
 		// finally, append articleDiv to the DOM
 		$('#articles-div').prepend(articleDiv);
 	}

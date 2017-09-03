@@ -124,7 +124,7 @@ module.exports = (app, passport) => {
 			console.log('NO USER LOGGED IN. REDIRECTING TO SIGNIN PAGE...');
 			return res.redirect('/siginin');
 		}
-		Article.findById(req.params.id).exec().then(article => {
+		Article.findById(req.params.id).populate('comments').populate('user').exec().then(article => {
 			if (!article) {
 				return res.send('No article found by id: ' + req.params.id);
 			}
@@ -134,5 +134,45 @@ module.exports = (app, passport) => {
 			console.log(err);
 			res.send('Server error: unable to locate article.');
 		});			
+	});
+	// get route for retrieving article data in json
+	app.post('/articles/:id/comment/new', (req, res) => {
+		// early returns if no user exists in session
+		if (!req.user) {
+			console.log('UNABLE TO POST NEW comment: NO USER LOGGED IN.');
+			return res.send('Unable to post new comment: no user is logged in.');
+		}
+		// creates new Comment instance
+		const content = {
+			title: req.body.title,
+			body: req.body.body,
+			user: req.user._id,
+			article: req.params.id
+		};
+		const newComment = new Comment(content);
+		console.log('ATTEMPTING TO POST NEW COMMENT...');
+		console.log(newComment);
+		console.log('FINDING ARTICLE IN DATABASE...');
+		Article.findById(req.params.id).exec().then(article => {
+			console.log('ARTICLE FOUND! PUSHING COMMENT AND SAVER TO ARTICLE, AND SAVING COMMENT...');
+			article.comments.push(newComment);
+			article.savers.push(req.user._id);
+			return Promise.all([article.save(), newComment.save()]);
+		}).then(data => {
+			console.log('COMMENT SAVED AND ARTICLE PUSHED! FINDING USER IN DATABASE...');
+			return User.findById(req.user._id).exec();
+		}).then(user => {
+			user.saved_articles.push(req.params.id);
+			user.posted_comments.push(newComment);
+			console.log("USER FOUND! PUSHING SAVED ARTICLE AND COMMENT TO USER...");
+			return user.save();
+		}).then(data => {
+			console.log("PROCESS COMPLETE! REDIRECTING TO SAVEDARTICLES...");
+			res.redirect('/articles/saved');
+		}).catch((err) => {
+			console.log('SERVER ERROR: UNABLE TO POST COMMENT AND/OR SAVE ARTICLE (SEE ERROR LOG).');
+			console.log(err);
+			res.send('Server error: unable to post comment and/or save article to user.');
+		});
 	});
 };

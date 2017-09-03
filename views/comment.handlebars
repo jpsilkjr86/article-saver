@@ -3,10 +3,44 @@
 </div>
 <div class="row">
 	<div class="col-xs-12">
-		<div class="list-group" id="articles-div" data-id="{{article._id}}"></div>
+		<div class="list-group" id="articles-div" data-id="{{articleId}}"></div>
 	</div>
 </div>
-			<!--
+<div class="row">
+	<div class="col-xs-12">
+		{{#each article.comments}}
+		<div class="panel panel-default">
+			<div class="panel-body">
+				
+				<div class="well">
+					<h4 style="font-weight: bold">{{this.title}}</h4>
+					<p>{{this.body}}</p>
+					<p style="font-style: italic" class="pull-left">{{this.user}}</p>
+					<p style="font-style: italic" class="pull-right">{{this.date}}</p>
+					<div class="clearfix"></div>
+				</div>
+				
+			</div>
+		</div>
+		{{/each}}
+		<div class="panel panel-default">
+			<div class="panel-body">
+				<form action="/articles/{{articleId}}/comment/new" method="post">
+					<div class="form-group">
+						<label for="title">Title</label>
+						<input type="text" class="form-control" name="title" placeholder="Provide a title to your comment here." required="required"/>
+					</div>
+					<div class="form-group">
+						<label for="body">Comment</label>
+						<textarea class="form-control" rows="3" name="body" required="required"></textarea>
+					</div>
+					<button type="submit" class="btn btn-default pull-right">Post Comment</button>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+			<!-- NOT WORKING
 			{{#if article}}
 			<a class="list-group-item">
 				<div class="row">
