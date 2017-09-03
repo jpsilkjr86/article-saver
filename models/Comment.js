@@ -10,7 +10,7 @@ var CommentSchema = new Schema({
   date: { type: Date, default: Date.now },
   // references Article model
   article: { type: Schema.Types.ObjectId, ref: "Article" },
-  user: { type: Schema.Types.ObjectId, ref: "User" }
+  author: String
 });
 
 // Create the Comment model with the CommentSchema

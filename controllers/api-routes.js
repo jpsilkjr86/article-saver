@@ -75,24 +75,35 @@ module.exports = (app, passport) => {
 		}
 		let articleId = req.body._id;
 		let userId = req.user._id;
-		console.log('SAVING ARTICLE ' + articleId + ' for user...');
-
-		User.update({_id: userId}, { $push: { saved_articles: articleId } }, (err1, data) => {
-			if (err1) {
-				console.log(err1);
-				return res.send('Server error. Unable to save article.');
-			}
-			console.log("PUSHED ONTO USER'S SAVED ARTICLES!");
-			Article.update({_id: articleId}, { $push: { savers: userId } }, (err2, data) => {
-				if (err2) {
-					console.log(err2);
-					return res.send("Server error. Unable to add user to article's savers.");
-				}
-				console.log("PUSHED ONTO ARTICLE'S SAVERS!");
-				res.send('Article successfully saved!');
-			});
-
+		// builds promise chain
+		const promise1 = User.update({_id: userId}, { $push: { saved_articles: articleId }}).exec();
+		const promise2 = Article.update({_id: articleId}, { $push: { savers: req.user.username }}).exec();
+		console.log('SAVING ARTICLE ' + articleId + '...');
+		// calls promise chain through Promise.all()
+		Promise.all([promise1, promise2]).then(data => {
+			console.log('ARTICLE SUCCESSFULLY SAVED!');
+			res.send('Article successfully saved!');
+		}).catch(err => {
+			console.log('SERVER ERROR. UNABLE TO SAVE ARTICLE (SEE ERROR LOG)');
+			console.log(err);
+			res.send('Server error. Unable to save article.');
 		});
+		// User.update({_id: userId}, { $push: { saved_articles: articleId } }, (err1, data) => {
+		// 	if (err1) {
+		// 		console.log(err1);
+		// 		return res.send('Server error. Unable to save article.');
+		// 	}
+		// 	console.log("PUSHED ONTO USER'S SAVED ARTICLES!");
+		// 	Article.update({_id: articleId}, { $push: { savers: userId } }, (err2, data) => {
+		// 		if (err2) {
+		// 			console.log(err2);
+		// 			return res.send("Server error. Unable to add user to article's savers.");
+		// 		}
+		// 		console.log("PUSHED ONTO ARTICLE'S SAVERS!");
+		// 		res.send('Article successfully saved!');
+		// 	});
+
+		// });
 	});
 	// get route for retrieving saved articles in json
 	app.get('/articles/saved/all', (req, res) => {
@@ -146,7 +157,7 @@ module.exports = (app, passport) => {
 		const content = {
 			title: req.body.title,
 			body: req.body.body,
-			user: req.user._id,
+			author: req.user.username,
 			article: req.params.id
 		};
 		const newComment = new Comment(content);

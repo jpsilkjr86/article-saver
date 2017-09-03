@@ -1,3 +1,7 @@
+// importing database models (mongoose)
+const Article = require('../models/Article.js'),
+	Comment = require('../models/Comment.js'),
+	User = require('../models/User.js');
 // exports html-routes as function which takes in app paramater
 module.exports = (app) => {
 	// route for index. if not signed in, redirect to signin page
@@ -35,10 +39,21 @@ module.exports = (app) => {
 			console.log('NO USER LOGGED IN. REDIRECTING TO SIGNIN PAGE...');
 			return res.redirect('/signin');
 		}
-		res.render('comment', {
-			script: 'comment.js',
-			user: req.user,
-			articleId: req.params.id
+		// verifying aritcle exists before rendering
+		Article.findById(req.params.id).populate('comments').exec().then(article => {
+			if (!article) {
+				return res.send('No article found by id: ' + req.params.id);
+			}
+			res.render('comment', {
+				script: 'comment.js',
+				user: req.user,
+				articleId: req.params.id,
+				comments: article.comments
+			});
+		}).catch((err) => {
+			console.log('SERVER ERROR: UNABLE TO LOCATE ARTICLE.');
+			console.log(err);
+			res.send('Server error: unable to locate article.');
 		});
 	});
 	// logs user out of site, deleting them from the session, and returns to signin page

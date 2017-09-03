@@ -14,7 +14,7 @@ var ArticleSchema = new Schema({
   // references Comment model, as array
   comments: [{ type: Schema.Types.ObjectId, ref: "Comment" }],
   // refers to which users are saving the article
-  savers: [{ type: Schema.Types.ObjectId, ref: "User" }]
+  savers: [{ type: String}]
 });
 
 // Create the Article model with the ArticleSchema

@@ -8,18 +8,16 @@
 </div>
 <div class="row">
 	<div class="col-xs-12">
-		{{#each article.comments}}
+		{{#each comments}}
 		<div class="panel panel-default">
-			<div class="panel-body">
-				
+			<div class="panel-body">				
 				<div class="well">
 					<h4 style="font-weight: bold">{{this.title}}</h4>
 					<p>{{this.body}}</p>
-					<p style="font-style: italic" class="pull-left">{{this.user}}</p>
+					<p style="font-style: italic" class="pull-left">{{this.author}}</p>
 					<p style="font-style: italic" class="pull-right">{{this.date}}</p>
 					<div class="clearfix"></div>
-				</div>
-				
+				</div>				
 			</div>
 		</div>
 		{{/each}}
