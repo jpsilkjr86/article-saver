@@ -82,6 +82,7 @@ $(document).ready(function(){
 		let _id = $(this).attr('data-id');
 		$.post('/save/', {_id}).done(function(data){
 			console.log(data);
+			$('#save-modal').modal('show');
 		}).fail(function(err){
 			console.log(err);
 		});
