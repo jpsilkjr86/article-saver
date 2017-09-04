@@ -104,21 +104,24 @@ passport.use('local-signup', new LocalStrategy({
 			// instantiates locally scoped constables, encrypts password argument.
 			// values come from username parameter, hash (encrypted pw), and req.body
 			const hash = bcrypt.hashSync(password, 8);
-			const newUser = {
+			const userData = {
 				username: username,
 				password: hash,
 				email: req.body.email,
 				first_name: req.body.first_name,
 				last_name: req.body.last_name
 			};
+			const newUser = new User(userData);
 			console.log("CREATING USER: " + username + "...");
-			// attempts to insert new user into database.
-			User.create(newUser).then(result => {
+			// attempts to save new user into database.
+			newUser.save().then(userDoc => {
+				console.log('ACCOUNT SUCCESSFULLY CREATED! ' + username);
+				console.log('New User Data:');
+				console.log(userDoc);
 				// if user was successfully able to create an account, display success
 				// message and return done(null, user)
-				console.log('ACCOUNT SUCCESSFULLY CREATED! ' + username);
 				req.session.success = "Account successfully created! Signed in as: " + username;
-				return done(null, newUser);
+				return done(null, userDoc);
 			}).catch(err => {
 				console.log('ERROR. FAILED TO CREATE USER.');
 				console.log(err);
