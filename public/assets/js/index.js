@@ -105,7 +105,7 @@ $(document).ready(function(){
 		let query = window.location.search.substring(3);
 		// if a query exists, do a search ajax call
 		if (queryParam === '?q=' && query != '') {
-			console.log('query exists');
+			console.log('Searching for ' + query + '...');
 			// calls search function which performs ajax get request with uri query string
 			search(query);
 		}

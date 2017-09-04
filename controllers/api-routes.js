@@ -172,7 +172,7 @@ module.exports = (app, passport) => {
 		console.log('ATTEMPTING TO POST NEW COMMENT...');
 		articleSaver.db.saveComment(commentContent).then(data => {
 			console.log("PROCESS COMPLETE! REDIRECTING TO SAVEDARTICLES...");
-			res.redirect('/articles/saved');
+			res.redirect('back');
 		}).catch((err) => {
 			console.log('SERVER ERROR: UNABLE TO POST COMMENT AND/OR SAVE ARTICLE (SEE ERROR LOG).');
 			console.log(err);
