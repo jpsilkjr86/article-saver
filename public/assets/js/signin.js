@@ -1,9 +1,7 @@
 $(document).ready(function(){
-	// // handler for guest btn
-	// $('#guest-btn').on('click', function() {
-	// 	// posts guest data to log in as guest. redirects to index
-	// 	$.post('/user/guest', {username:'guest', password:'guest'}).done(function(data){
-	// 		window.location.replace('/');
-	// 	});
-	// });
+	// checks to see if there's an alert before showing start-modal
+	if (!$('.alert').length) {
+		// shows start-modal upon loading of document
+		$('#start-modal').modal('show');
+	}
 });

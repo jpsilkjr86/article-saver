@@ -2,18 +2,120 @@
 	<h1>Article Saver</h1>
 	<div class="row">
 		<div class="col-xs-8 col-xs-offset-2">
-			<div class="well">
-				<button type="button" class="btn btn-info btn-md btn-block" id="signin-btn" disabled="disabled">Sign In</button>
-				<button type="button" class="btn btn-success btn-md btn-block" id="newacct-btn" disabled="disabled">New Account</button>
-				<form action="/user/guest" method="post" style="margin-top: 5px">
-					<input type="hidden" name="username" value="guest">
-					<input type="hidden" name="password" value="guest">
-					<!-- <input type="hidden" name="email" value="guest@website.com">
-					<input type="hidden" name="first_name" value="guest"> -->
-					<button type="submit" class="btn btn-warning btn-md btn-block" id="guest-btn">Join As Guest</button>
-				</form>
-				<!-- <button type="button" class="btn btn-warning btn-md btn-block" id="guest-btn">Join As Guest</button> -->
-			</div>			
+			<!-- start-modal trigger -->
+			<button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#start-modal" style="display: block; width: 130px; margin: auto">Get Started!</button>
+			<!-- <button type="button" class="btn btn-warning btn-md btn-block" id="guest-btn">Join As Guest</button> -->
 		</div>
 	</div>
 </div>
+<!-- Start Modal -->
+<div class="modal fade" tabindex="-1" role="dialog" id="start-modal">
+	<div class="modal-dialog" role="document" style="top:30%">
+		<div class="modal-content">
+			<div class="modal-body">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title text-center">Welcome to Article-Saver!</h4>
+			</div>
+			<div class="modal-footer">
+				<div class="row">
+					<div class="col-sm-4" style="margin: 5px 0">
+						<button type="button" class="btn btn-info btn-md btn-block" id="signin-btn" data-toggle="modal" data-target="#signin-modal">Sign In</button>
+					</div>
+					<div class="col-sm-4" style="margin: 5px 0">
+						<form action="/user/guest" method="post">
+							<input type="hidden" name="username" value="guest">
+							<input type="hidden" name="password" value="guest">
+							<!-- <input type="hidden" name="email" value="guest@website.com">
+							<input type="hidden" name="first_name" value="guest"> -->
+							<button type="submit" class="btn btn-warning btn-md btn-block" id="guest-btn">Join As Guest</button>
+						</form>
+					</div>
+					<div class="col-sm-4" style="margin: 5px 0">
+						<button type="button" class="btn btn-success btn-md btn-block" id="newacct-btn" data-toggle="modal" data-target="#newacct-modal">New Account</button>
+					</div>
+				</div> <!-- end of row -->	
+			</div> <!-- end of modal-footer -->
+		</div><!-- end of modal-content -->
+	</div><!-- end of modal-dialog -->
+</div><!-- end of modal -->
+
+<!-- Sign-in Modal -->
+<div class="modal fade" tabindex="-1" role="dialog" id="signin-modal">
+	<div class="modal-dialog" role="document" style="top:20%">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title text-center">Sign In</h4>
+			</div>
+			<!-- form wraps body and footer -->
+			<form action="/user/signin" method="post">
+				<div class="modal-body">
+					<div class="form-group">
+						<label for="username">Username</label>
+						<input type="text" class="form-control" name="username" placeholder="Username" required="required">
+					</div>
+					<div class="form-group">
+						<label for="password">Password</label>
+						<input type="password" class="form-control" name="password" placeholder="Password" required="required">
+					</div>
+				</div> <!-- end of modal-body -->
+				<div class="modal-footer">
+					<button type="submit" class="btn btn-primary">Submit</button>
+				</div> <!-- end of modal-footer -->
+			</form>
+		</div><!-- end of modal-content -->
+	</div><!-- end of modal-dialog -->
+</div><!-- end of modal -->
+
+<!-- New Account Modal -->
+<div class="modal fade" tabindex="-1" role="dialog" id="newacct-modal">
+	<div class="modal-dialog" role="document" style="top:20%">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title text-center">Create New Account</h4>
+			</div>
+			<!-- form wraps body and footer -->
+			<form action="/user/new" method="post">
+				<div class="modal-body">
+					<div class="row">
+						<div class="col-xs-12 col-sm-6">
+							<div class="form-group">
+								<label for="username">*Username</label>
+								<input type="text" class="form-control" name="username" placeholder="Choose a Username" required="required">
+							</div>
+						</div>
+						<div class="col-xs-12 col-sm-6">
+							<div class="form-group">
+								<label for="password">*Password</label>
+								<input type="password" class="form-control" name="password" placeholder="Choose a Password" required="required">
+							</div>
+						</div>
+						<div class="col-xs-12 col-sm-6">
+							<div class="form-group">
+								<label for="first_name">*First Name</label>
+								<input type="text" class="form-control" name="first_name" placeholder="Your First Name" required="required">
+							</div>
+						</div>
+						<div class="col-xs-12 col-sm-6">
+							<div class="form-group">
+								<label for="last_name">Last Name</label>
+								<input type="text" class="form-control" name="last_name" placeholder="Your Last Name" required="required">
+							</div>
+						</div>
+						<div class="col-xs-12">
+							<div class="form-group">
+								<label for="email">*Email Address</label>
+								<input type="email" class="form-control" name="email" placeholder="Enter an Email Address" required="required">
+							</div>
+						</div>
+					</div> <!-- end of row -->
+				</div> <!-- end of modal-body -->
+				<div class="modal-footer">
+					<p style="font-style: italic" class="pull-left">*Required fields</p>
+					<button type="submit" class="btn btn-primary">Submit</button>
+				</div> <!-- end of modal-footer -->
+			</form>
+		</div><!-- end of modal-content -->
+	</div><!-- end of modal-dialog -->
+</div><!-- end of modal -->
