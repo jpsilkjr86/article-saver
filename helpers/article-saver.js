@@ -182,7 +182,38 @@ const articleSaver = {
 					reject(err);
 				});
 			});
-		} // end of articleSaver.db.saveArticle
+		}, // end of articleSaver.db.saveArticle
+		saveComment: (commentContent) => {
+			return new Promise ( (resolve, reject) => {
+				// creates new Comment instance
+				const newComment = new Comment(commentContent);
+				// saves findArticle and findUser as promises for first part of promise chain
+				const findArticle = Article.findById(newComment.article).exec(),
+					findUser = User.findOne({username: newComment.author}).exec();
+				// verifies existence of user and article in database
+				Promise.all([findArticle, findUser]).then(data => {
+					console.log('found article and user');
+					// saves article and user database instances as temp constables
+					const article = data[0],
+						user = data[1];
+					// updates comment data for article and user
+					article.comments.push(newComment);
+					user.posted_comments.push(newComment);
+					// returns promise of all updates, including automatically saving article to user
+					return Promise.all([
+						newComment.save(),
+						article.save(),
+						user.save(),
+						articleSaver.db.saveArticle(newComment.author, newComment.article)
+					]);
+				}).then(data => {
+					console.log("process complete");
+					resolve({success: true, message: 'Comment saved!'});
+				}).catch((err) => {
+					reject(err);
+				}); // end of promise chain
+			}); // end of returned promise
+		}
 	} // end of articleSaver.db sub-object
 }; // end of articleSaver
 

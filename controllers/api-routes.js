@@ -161,31 +161,14 @@ module.exports = (app, passport) => {
 			console.log('UNABLE TO POST NEW comment: NO USER LOGGED IN.');
 			return res.send('Unable to post new comment: no user is logged in.');
 		}
-		// creates new Comment instance
-		const content = {
+		const commentContent = {
 			title: req.body.title,
 			body: req.body.body,
 			author: req.user.username,
 			article: req.params.id
 		};
-		const newComment = new Comment(content);
 		console.log('ATTEMPTING TO POST NEW COMMENT...');
-		console.log(newComment);
-		console.log('FINDING ARTICLE IN DATABASE...');
-		Article.findById(req.params.id).exec().then(article => {
-			console.log('ARTICLE FOUND! PUSHING COMMENT AND SAVER TO ARTICLE, AND SAVING COMMENT...');
-			article.comments.push(newComment);
-			article.savers.push(req.user._id);
-			return Promise.all([article.save(), newComment.save()]);
-		}).then(data => {
-			console.log('COMMENT SAVED AND ARTICLE PUSHED! FINDING USER IN DATABASE...');
-			return User.findById(req.user._id).exec();
-		}).then(user => {
-			user.saved_articles.push(req.params.id);
-			user.posted_comments.push(newComment);
-			console.log("USER FOUND! PUSHING SAVED ARTICLE AND COMMENT TO USER...");
-			return user.save();
-		}).then(data => {
+		articleSaver.db.saveComment(commentContent).then(data => {
 			console.log("PROCESS COMPLETE! REDIRECTING TO SAVEDARTICLES...");
 			res.redirect('/articles/saved');
 		}).catch((err) => {
