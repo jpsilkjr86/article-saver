@@ -81,7 +81,15 @@ $(document).ready(function(){
 	$(document).on('click', '.save-btn', function() {
 		let _id = $(this).attr('data-id');
 		$.post('/save/', {_id}).done(function(data){
+			let message = '';
 			console.log(data);
+			if (data === 'Article already exists among saved articles.') {
+				message = 'Article already exists among saved articles.';
+			}
+			else { 
+				message = 'Article successfully saved!';
+			}
+			$('#save-modal-body').html(message);
 			$('#save-modal').modal('show');
 		}).fail(function(err){
 			console.log(err);

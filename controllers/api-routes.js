@@ -73,14 +73,24 @@ module.exports = (app, passport) => {
 			console.log('Cannot save aritcle - No user logged in.');
 			return res.send('Cannot save aritcle - No user logged in.');
 		}
+		// instantiates temp variables for building update arguments
 		let articleId = req.body._id;
 		let userId = req.user._id;
-		// builds promise chain
-		const promise1 = User.update({_id: userId}, { $push: { saved_articles: articleId }}).exec();
-		const promise2 = Article.update({_id: articleId}, { $push: { savers: req.user.username }}).exec();
+		const userUpdateConditions = { _id: userId, saved_articles: { $ne: articleId } };
+		const userUpdateData = { $push: { saved_articles: articleId } };
+		const articleUpdateConditions = { _id: articleId, savers: { $ne: req.user.username } };
+		const articleUpdateData = { $push: { savers: req.user.username } };		
+		// builds update promise chain
+		const promise1 = User.update(userUpdateConditions, userUpdateData).exec();
+		const promise2 = Article.update(articleUpdateConditions, articleUpdateData).exec();
 		console.log('SAVING ARTICLE ' + articleId + '...');
 		// calls promise chain through Promise.all()
 		Promise.all([promise1, promise2]).then(data => {
+			// early returns & sends message to user if article has already been saved
+			if (data[0].nModified == 0 && data[1].nModified == 0) {
+				console.log('ARTICLE ALREADY EXISTS AMONG SAVED ARTICLES.')
+				return res.send('Article already exists among saved articles.');
+			}
 			console.log('ARTICLE SUCCESSFULLY SAVED!');
 			res.send('Article successfully saved!');
 		}).catch(err => {
@@ -88,22 +98,29 @@ module.exports = (app, passport) => {
 			console.log(err);
 			res.send('Server error. Unable to save article.');
 		});
-		// User.update({_id: userId}, { $push: { saved_articles: articleId } }, (err1, data) => {
-		// 	if (err1) {
-		// 		console.log(err1);
-		// 		return res.send('Server error. Unable to save article.');
-		// 	}
-		// 	console.log("PUSHED ONTO USER'S SAVED ARTICLES!");
-		// 	Article.update({_id: articleId}, { $push: { savers: userId } }, (err2, data) => {
-		// 		if (err2) {
-		// 			console.log(err2);
-		// 			return res.send("Server error. Unable to add user to article's savers.");
-		// 		}
-		// 		console.log("PUSHED ONTO ARTICLE'S SAVERS!");
-		// 		res.send('Article successfully saved!');
-		// 	});
-
-		// });
+	});
+	// route for letting users unsave articles
+	app.post('/unsave', (req, res) => {
+		// early return if there's no user logged in
+		if (!req.user) {
+			console.log('Cannot save aritcle - No user logged in.');
+			return res.send('Cannot save aritcle - No user logged in.');
+		}
+		let articleId = req.body._id;
+		let userId = req.user._id;
+		// builds promise chain
+		const promise1 = User.update({_id: userId}, { $pull: { saved_articles: articleId }}).exec();
+		const promise2 = Article.update({_id: articleId}, { $pull: { savers: req.user.username }}).exec();
+		console.log('UNSAVING ARTICLE ' + articleId + '...');
+		// calls promise chain through Promise.all()
+		Promise.all([promise1, promise2]).then(data => {
+			console.log('ARTICLE SUCCESSFULLY UNSAVED.');
+			res.send('Article successfully unsaved.');
+		}).catch(err => {
+			console.log('SERVER ERROR. UNABLE TO UNSAVE ARTICLE (SEE ERROR LOG)');
+			console.log(err);
+			res.send('Server error. Unable to unsave article.');
+		});
 	});
 	// get route for retrieving saved articles in json
 	app.get('/articles/saved/all', (req, res) => {

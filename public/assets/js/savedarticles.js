@@ -50,6 +50,14 @@ $(document).ready(function(){
 							.appendTo(colMain);
 			// add clearfix to clear floats
 			$('<div>').addClass('clearfix').appendTo(colMain);
+			// add unsave button to the right-hand column. wrap i
+			let unsaveBtn = $('<button>')
+							.addClass('btn btn-default btn-sm article-btn unsave-btn')
+							.attr('data-id', articles[i]._id);
+			$('<span>').addClass('glyphicon glyphicon-remove')
+					.attr('aria-hidden', 'true')
+					.appendTo(unsaveBtn);
+			unsaveBtn.appendTo(colRight);
 			// add comment button to the right-hand column
 			let commentBtn = $('<a>')
 							.addClass('btn btn-default btn-sm article-btn comment-btn')
@@ -79,6 +87,15 @@ $(document).ready(function(){
 		// calls search function
 		search(query);
 	});
-
+	// listener for clicking on save-btn, posting ajax request to article by id
+	$(document).on('click', '.unsave-btn', function() {
+		let _id = $(this).attr('data-id');
+		$.post('/unsave/', {_id}).done(function(data){
+			console.log(data);
+			$('#unsave-modal').modal('show');
+		}).fail(function(err){
+			console.log(err);
+		});
+	});
 	getSavedArticles();
 });
