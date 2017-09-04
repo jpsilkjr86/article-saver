@@ -76,7 +76,7 @@ const articleSaver = {
 							console.log(err);
 							return reject(err);
 						});
-					}, 4);
+					}, 2000);
 				}; // end of checkReady() declaration
 				// calls checkReady
 				checkReady(page);
@@ -159,52 +159,30 @@ const articleSaver = {
 			} // end of for-loop
 			// returns Promise.all of upsertArticlePromises array
 			return Promise.all(upsertArticlePromises);
-
-			/*
-			// returns promise that resolves with articles synced with database
+		}, // end of articleSaver.db.sync
+		saveArticle: (username, articleId) => {
 			return new Promise ( (resolve, reject) => {
-				const syncedArticles = [];
-				const articlePromises = [];
-				// loop through results and builds promise chain for saving articles to database
-				for (let i = 0; i < results.length; i++) {
-					// generate new promise for each areticle and pushes them onto articlePromises
-					articlePromises.push( new Promise ( (resolveArticle, rejectArticle) => {
-						let query = {link: results[i].link};
-						let newData = {
-							headline: results[i].headline,
-							thumbnail: results[i].thumbnail,
-							summary: results[i].summary,
-							by: results[i].by,
-							date: results[i].date
-						};
-						// ensures that article is upserted, the doc in callback reflects 
-						// updated data, and defaults are set upon upsert (usually doesnt happen)
-						// https://stackoverflow.com/questions/25755521/mongoose-upsert-does-not-create-default-schema-property
-						let options = {upsert: true, new: true, setDefaultsOnInsert: true};
-						// upsert document
-						Article.findOneAndUpdate(query, newData, options, (err, doc) => {
-							if (err) {
-								console.log(err);
-								rejectArticle(err);
-							}
-							else {
-								// pushes successfully saved doc onto syncedArticles and resolves
-								syncedArticles.push(doc);
-								resolveArticle();
-							}
-						});
-					}));
-				}
-				// Promise.all for all articlePromises
-				Promise.all(articlePromises).then(() => {
-					// resolves with synced articles array
-					resolve(syncedArticles);
-				}).catch((err) => {
+				// instantiates temp variables for building update arguments
+				const userUpdateConditions = { username: username, saved_articles: { $ne: articleId } };
+				const userUpdateData = { $push: { saved_articles: articleId } };
+				const articleUpdateConditions = { _id: articleId, savers: { $ne: username } };
+				const articleUpdateData = { $push: { savers: username } };		
+				// builds update promise chain
+				const promise1 = User.update(userUpdateConditions, userUpdateData).exec();
+				const promise2 = Article.update(articleUpdateConditions, articleUpdateData).exec();
+				// calls promise chain through Promise.all()
+				Promise.all([promise1, promise2]).then(data => {
+					// early returns & sends message to user if article has already been saved
+					if (data[0].nModified == 0 && data[1].nModified == 0) {
+						resolve({success: false, message: 'Article already exists among saved articles.'});
+					} else {
+						resolve({success: true, message: 'Article successfully saved!'});
+					}
+				}).catch(err => {
 					reject(err);
 				});
-			}); // end of returned promise
-			*/
-		} // end of articleSaver.db.sync
+			});
+		} // end of articleSaver.db.saveArticle
 	} // end of articleSaver.db sub-object
 }; // end of articleSaver
 

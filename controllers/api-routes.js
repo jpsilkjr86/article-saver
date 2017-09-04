@@ -75,19 +75,10 @@ module.exports = (app, passport) => {
 		}
 		// instantiates temp variables for building update arguments
 		let articleId = req.body._id;
-		let userId = req.user._id;
-		const userUpdateConditions = { _id: userId, saved_articles: { $ne: articleId } };
-		const userUpdateData = { $push: { saved_articles: articleId } };
-		const articleUpdateConditions = { _id: articleId, savers: { $ne: req.user.username } };
-		const articleUpdateData = { $push: { savers: req.user.username } };		
-		// builds update promise chain
-		const promise1 = User.update(userUpdateConditions, userUpdateData).exec();
-		const promise2 = Article.update(articleUpdateConditions, articleUpdateData).exec();
 		console.log('SAVING ARTICLE ' + articleId + '...');
-		// calls promise chain through Promise.all()
-		Promise.all([promise1, promise2]).then(data => {
+		articleSaver.db.saveArticle(req.user.username, articleId).then(data => {
 			// early returns & sends message to user if article has already been saved
-			if (data[0].nModified == 0 && data[1].nModified == 0) {
+			if (!data.success) {
 				console.log('ARTICLE ALREADY EXISTS AMONG SAVED ARTICLES.')
 				return res.send('Article already exists among saved articles.');
 			}
