@@ -61,7 +61,7 @@ $(document).ready(function(){
 			$('#articles-div').prepend(articleDiv);
 		}
 	}
-	// listener for submitting forms
+	// listener for submitting search
 	$('.search-btn').on('click', function(e) {
 		// prevents page from reloading
 		e.preventDefault();
@@ -74,8 +74,10 @@ $(document).ready(function(){
 		// empties input field
 		$(this).closest('form').find('input').val('');
 		console.log(query);
-		// calls search function
-		search(query);
+		if (query != '') {
+			// redirects to same page with query string in uri
+			window.location.replace('?q=' + query);
+		}
 	});
 	// listener for clicking on save-btn, posting ajax request to article by id
 	$(document).on('click', '.save-btn', function() {
@@ -95,4 +97,16 @@ $(document).ready(function(){
 			console.log(err);
 		});
 	});
+	// function for checking uri for query string
+	function checkForQueryOnUri () {
+		let queryParam = window.location.search.substring(0, 3);
+		let query = window.location.search.substring(3);
+		// if a query exists, do a search ajax call
+		if (queryParam === '?q=' && query != '') {
+			console.log('query exists');
+			// calls search function which performs ajax get request with uri query string
+			search(query);
+		}
+	}
+	checkForQueryOnUri();
 });

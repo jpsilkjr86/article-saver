@@ -10,6 +10,8 @@ const Article = require('../models/Article.js'),
 module.exports = (app, passport) => {
 	// get route for search
 	app.get('/search', (req, res) => {
+		console.log(req.query);
+		console.log('second');
 		// early returns if no search is specified
 		if (!req.query.q) {
 			return res.send('No search query has been specified.');

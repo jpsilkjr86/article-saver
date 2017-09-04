@@ -39,7 +39,7 @@ $(document).ready(function(){
 		// finally, append articleDiv to the DOM
 		$('#articles-div').prepend(articleDiv);
 	}
-	// listener for submitting forms
+	// listener for submitting search
 	$('.search-btn').on('click', function(e) {
 		// prevents page from reloading
 		e.preventDefault();
@@ -52,8 +52,10 @@ $(document).ready(function(){
 		// empties input field
 		$(this).closest('form').find('input').val('');
 		console.log(query);
-		// calls search function
-		// search(query);
+		if (query != '') {
+			// redirects to search page with query string in uri
+			window.location.replace('/?q=' + query);
+		}
 	});
 
 	getArticleData();
