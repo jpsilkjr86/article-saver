@@ -7,7 +7,9 @@ $(document).ready(function(){
 			displayArticles(data.results);
 		});
 	}
-	// function for displaying articles on the DOM
+	// function for displaying articles on the DOM.
+	// this function must be done with jquery. seems there's an error with
+	// rendering list-group-item's with handlebars.
 	function displayArticles (articles) {
 		for (let i = 0; i < articles.length; i++) {
 			// declare parent article element
