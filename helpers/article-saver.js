@@ -93,7 +93,7 @@ const articleSaver = {
 				let nytQueryUrl = 'https://query.nytimes.com/search/sitesearch/'
 					+ '?action=click&contentCollection&region=TopBar&WT.nav=searchWidget'
 					+ '&module=SearchSubmit&pgtype=Homepage#/' + query
-					+ '/since1851/document_type%3A%22article%22/';
+					+ '/30days/document_type%3A%22article%22/';
 				// calls helper function to grab html from phantom instance.
 				// similar to request but more powerful in that it can wait for dynamic content to load.
 				articleSaver.phantom.getHTML(nytQueryUrl).then(function(html){
