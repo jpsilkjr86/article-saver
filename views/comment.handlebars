@@ -8,20 +8,26 @@
 </div>
 <div class="row">
 	<div class="col-xs-12">
-		{{#each comments}}
 		<div class="panel panel-default">
-			<div class="panel-body">				
+			<div class="panel-heading"><h3>Comments</h3></div>
+			<div class="panel-body">
+			{{#if comments}}
+			{{#each comments}}			
 				<div class="well">
 					<h4 style="font-weight: bold">{{this.title}}</h4>
 					<p>{{this.body}}</p>
 					<p style="font-style: italic" class="pull-left">{{this.author}}</p>
 					<p style="font-style: italic" class="pull-right">{{this.date}}</p>
 					<div class="clearfix"></div>
-				</div>				
+				</div>	
+			{{/each}}
+			{{else}}
+			<p>Be the first to leave a comment!</p>
+			{{/if}}		
 			</div>
 		</div>
-		{{/each}}
 		<div class="panel panel-default">
+			<div class="panel-heading"><h3>Post New Comment</h3></div>
 			<div class="panel-body">
 				<form action="/articles/{{articleId}}/comment/new" method="post">
 					<div class="form-group">
