@@ -55,28 +55,46 @@ const articleSaver = {
 		// helper function that works with phantom to ensure the document is fully loaded before proceeding
 		onReadyState: (page) => {
 			return new Promise ((resolve, reject) => {
-				// checkReady is a function that calls itself recursively to make sure the document is ready
+				// checkReady is a function that calls itself recursively while page is loading
 				const checkReady = (page) => {
-					// setTimeout for allowing slight delay
+					// setTimeout for allowing slight delay for loading
 					setTimeout(function() {
-						// evaluates just the page's readyState property
 						page.evaluate(function() {
-							return document.readyState;
-						}).then(function(readyState) {
-							console.log('PAGE READY STATUS: ' + readyState);
-							if (readyState === 'complete') {
-								// resolves when readyState === 'complete'
-								return resolve();
-							}
-							else {
+							return document.documentElement.outerHTML;
+						}).then(function(html) {
+							// loads HTML into cheerio and saves it as a variable
+							let $ = cheerio.load(html);
+							let stillLoading = $('li.loadingResults').length,
+								storyFound = $('li.story').length;
+							console.log('Phantom page loading...');
+							if (stillLoading) {
 								// check again if readyState is complete
 								checkReady(page);
+							} else if (!storyFound) {
+								checkReady(page);
+							} else {
+								console.log('Loading finished!');
+								return resolve();
 							}
+						// // OLD (doesn't work all the time):
+						// // evaluates just the page's readyState property
+						// page.evaluate(function() {
+						// 	return document.readyState;
+						// }).then(function(readyState) {
+						// 	console.log('PAGE READY STATUS: ' + readyState);
+						// 	if (readyState === 'complete') {
+						// 		// resolves when readyState === 'complete'
+						// 		return resolve();
+						// 	}
+						// 	else {
+						// 		// check again if readyState is complete
+						// 		checkReady(page);
+						// 	}
 						}).catch(function(err) {
 							console.log(err);
 							return reject(err);
 						});
-					}, 2000);
+					}, 4);
 				}; // end of checkReady() declaration
 				// calls checkReady
 				checkReady(page);
