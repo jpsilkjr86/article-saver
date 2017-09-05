@@ -231,6 +231,24 @@ const articleSaver = {
 					reject(err);
 				}); // end of promise chain
 			}); // end of returned promise
+		},
+		getMostSaved: () => {
+			return Article.aggregate()
+				.project({
+					headline: 1, link: 1, by: 1, date: 1, thumbnail: 1, summary: 1,
+					numOfSaves: {$size: "$savers"}})
+				.sort({numOfSaves: -1})
+				.limit(5)
+				.exec();
+		},
+		getMostCommented: () => {
+			return Article.aggregate()
+				.project({
+					headline: 1, link: 1, by: 1, date: 1, thumbnail: 1, summary: 1,
+					numOfComments: {$size: "$comments"}})
+				.sort({numOfComments: -1})
+				.limit(3)
+				.exec();
 		}
 	} // end of articleSaver.db sub-object
 }; // end of articleSaver

@@ -119,8 +119,8 @@ module.exports = (app, passport) => {
 	app.get('/articles/saved/all', (req, res) => {
 		// early returns if no user exists in session
 		if (!req.user) {
-			console.log('NO USER LOGGED IN. REDIRECTING TO SIGNIN PAGE...');
-			return res.redirect('/siginin');
+			console.log('CANNOT RETRIEVE SAVED ARTICLES. NO USER LOGGED IN.');
+			return res.send('Cannot retrieve saved articles. No user logged in.');
 		}
 		User.findById(req.user._id).populate('saved_articles').exec().then(thisUser => {
 			console.log('RESULTS FOUND! NUMBER OF SAVED ARTICLES: ' + thisUser.saved_articles.length);
@@ -137,13 +137,57 @@ module.exports = (app, passport) => {
 				responseMsg: "Server error: Unable to locate saved articles."
 			});
 		});			
-	}); // end of app.get('/search')
+	}); // end of app.get('/articles/saved/all')
+	// get route for retrieving most saved articles in json
+	app.get('/articles/saved/mostsaved', (req, res) => {
+		// early returns if no user exists in session
+		if (!req.user) {
+			console.log('CANNOT RETRIEVE MOST SAVED ARTICLES. NO USER LOGGED IN.');
+			return res.send('Cannot retrieved most saved articles. No user logged in.');
+		}
+		articleSaver.db.getMostSaved().then(results => {
+			console.log(results);
+			res.json({
+				results: results,
+				responseMsg: "Results found!"
+			});
+		}).catch((err) => {
+			console.log('SERVER ERROR: UNABLE TO LOCATE MOST SAVED ARTICLES.');
+			console.log(err);
+			res.json({
+				results: [],
+				responseMsg: "Server error: Unable to locate most saved articles."
+			});
+		});			
+	}); // end of app.get('articles/saved/mostsaved')
+	// get route for retrieving most commented articles in json
+	app.get('/articles/mostcommented', (req, res) => {
+		// early returns if no user exists in session
+		if (!req.user) {
+			console.log('CANNOT RETRIEVE MOST COMMENTED ARTICLES. NO USER LOGGED IN.');
+			return res.send('Cannot retrieved most commented articles. No user logged in.');
+		}
+		articleSaver.db.getMostCommented().then(results => {
+			console.log(results);
+			res.json({
+				results: results,
+				responseMsg: "Results found!"
+			});
+		}).catch((err) => {
+			console.log('SERVER ERROR: UNABLE TO LOCATE MOST COMMENTED ARTICLES.');
+			console.log(err);
+			res.json({
+				results: [],
+				responseMsg: "Server error: Unable to locate most commented articles."
+			});
+		});			
+	}); // end of app.get('articles/mostcommented')
 	// get route for retrieving article data in json
 	app.get('/articles/:id', (req, res) => {
 		// early returns if no user exists in session
 		if (!req.user) {
-			console.log('NO USER LOGGED IN. REDIRECTING TO SIGNIN PAGE...');
-			return res.redirect('/siginin');
+			console.log('CANNOT RETRIEVE ARTICLE DATA. NO USER LOGGED IN.');
+			return res.send('Cannot retrieve article data. No user logged in.');
 		}
 		Article.findById(req.params.id).populate('comments').populate('user').exec().then(article => {
 			if (!article) {
