@@ -14,6 +14,16 @@ module.exports = (app) => {
 			res.redirect('/signin');
 		}
 	});
+	// route for search page. if not signed in, redirect to signin page
+	app.get('/search', (req, res) => {
+		if (req.user) {
+			console.log('Logged in as user ' + req.user.username + '');
+			res.render('search', {script: 'search.js', user: req.user});
+		} else {
+			console.log('No logged-in user found. Redirecting to signin page...');
+			res.redirect('/signin');
+		}
+	});
 	// route for signin page. if signed in, redirect to index
 	app.get('/signin', (req, res) => {
 		if (req.user) {

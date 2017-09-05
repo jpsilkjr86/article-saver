@@ -9,7 +9,7 @@ const Article = require('../models/Article.js'),
 // exports as function which takes in app as parameter
 module.exports = (app, passport) => {
 	// get route for search
-	app.get('/search', (req, res) => {
+	app.get('/search/exec', (req, res) => {
 		console.log(req.query);
 		console.log('second');
 		// early returns if no search is specified

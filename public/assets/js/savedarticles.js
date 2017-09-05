@@ -79,7 +79,7 @@ $(document).ready(function(){
 		console.log(query);
 		if (query != '') {
 			// redirects to search page with query string in uri
-			window.location.replace('/?q=' + query);
+			window.location.replace('/search/?q=' + query);
 		}
 	});
 	// listener for clicking on save-btn, posting ajax request to article by id
