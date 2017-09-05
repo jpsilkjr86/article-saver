@@ -247,7 +247,7 @@ const articleSaver = {
 					headline: 1, link: 1, by: 1, date: 1, thumbnail: 1, summary: 1,
 					numOfComments: {$size: "$comments"}})
 				.sort({numOfComments: -1})
-				.limit(3)
+				.limit(5)
 				.exec();
 		}
 	} // end of articleSaver.db sub-object

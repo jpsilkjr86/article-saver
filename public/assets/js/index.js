@@ -1,24 +1,30 @@
 $(document).ready(function(){
-	// function for ajax get request for searching articles
-	function search (query) {
-		// get request for searching article saver
-		$.get('/search/exec?q=' + query).done(function(data){
+	// function for ajax get request for getting most popular articles
+	function getPopular (query) {
+		$.get('/articles/saved/mostsaved').done(function(data){
 			console.log(data);
-			displayArticles(data.results);
+			displayArticlesOn(data.results, '#popular-articles');
+		});
+	}
+	// function for ajax get request for getting most commented articles
+	function getCommented (query) {
+		$.get('/articles/mostcommented').done(function(data){
+			console.log(data);
+			displayArticlesOn(data.results, '#commented-articles');
 		});
 	}
 	// function for displaying articles on the DOM.
 	// this function must be done with jquery. seems there's an error with
 	// rendering list-group-item's with handlebars.
-	function displayArticles (articles) {
+	function displayArticlesOn (articles, targetDiv) {
 		for (let i = 0; i < articles.length; i++) {
 			// declare parent article element
 			let articleDiv = $('<a>').addClass('list-group-item');
 			// divide parent article element into three columns
 			let row = $('<div>').addClass('row').appendTo(articleDiv),
-				colLeft = $('<div>').addClass('col-xs-3 col-md-2').appendTo(row),
-				colMain = $('<div>').addClass('col-xs-7 col-md-9').appendTo(row),
-				colRight = $('<div>').addClass('col-xs-2 col-sm-1').appendTo(row);
+				colLeft = $('<div>').addClass('col-xs-3 col-md-3').appendTo(row),
+				colMain = $('<div>').addClass('col-xs-7 col-md-7').appendTo(row),
+				colRight = $('<div>').addClass('col-xs-2 col-md-2').appendTo(row);
 			// put thumb in left column, wrapped in <a> tag
 			let thumb = $('<img>').attr('src', articles[i].thumbnail)
 							.addClass('img-responsive article-thumb');
@@ -59,8 +65,8 @@ $(document).ready(function(){
 					.attr('aria-hidden', 'true')
 					.appendTo(commentBtn);
 			commentBtn.appendTo(colRight);
-			// finally, append articleDiv to the DOM
-			$('#articles-div').prepend(articleDiv);
+			// finally, append articleDiv to the DOM on targetDiv argument
+			$(targetDiv).prepend(articleDiv);
 		}
 	}
 	// listener for submitting search
@@ -99,16 +105,7 @@ $(document).ready(function(){
 			console.log(err);
 		});
 	});
-	// function for checking uri for query string
-	function checkForQueryOnUri () {
-		let queryParam = window.location.search.substring(0, 3);
-		let query = window.location.search.substring(3);
-		// if a query exists, do a search ajax call
-		if (queryParam === '?q=' && query != '') {
-			console.log('Searching for ' + query + '...');
-			// calls search function which performs ajax get request with uri query string
-			search(query);
-		}
-	}
-	checkForQueryOnUri();
+	// runs these functions upon document loading
+	getPopular();
+	getCommented();
 });
