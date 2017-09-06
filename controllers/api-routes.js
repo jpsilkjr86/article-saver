@@ -1,14 +1,29 @@
 // dependencies: articleSaver helper functions
 const articleSaver = require('../helpers/article-saver.js');
 
-// importing database models (mongoose)
-const Article = require('../models/Article.js'),
-	Comment = require('../models/Comment.js'),
-	User = require('../models/User.js');
-
 // exports as function which takes in app as parameter
 module.exports = (app, passport) => {
-	// get route for search
+	// route for signing up new users. authenticates with passport local strategy 'local-signup'
+	app.post('/user/new', passport.authenticate('local-signup', {
+		successRedirect: '/',
+		failureRedirect: '/signin'
+	}));
+	// route for signing in. authenticates with passport local strategy 'local-signin'
+	app.post('/user/signin', passport.authenticate('local-signin', {
+		successRedirect: '/',
+		failureRedirect: '/signin'
+	}));
+	// route for signing in as guest.
+	app.post('/user/guest', passport.authenticate('local-signin', {
+		successRedirect: '/',
+		failureRedirect: '/signin'
+	}));
+	// app.post('/user/guest', passport.authenticate('local-signup', {
+	// 	successRedirect: '/',
+	// 	failureRedirect: '/signin'
+	// }));
+
+	// api get route for searching
 	app.get('/search/exec', (req, res) => {
 		console.log(req.query);
 		console.log('second');
@@ -48,27 +63,7 @@ module.exports = (app, passport) => {
 		}); // end of promise chain
 	}); // end of app.get('/search')
 
-	// route for signing up new users. authenticates with passport local strategy 'local-signup'
-	app.post('/user/new', passport.authenticate('local-signup', {
-		successRedirect: '/',
-		failureRedirect: '/signin'
-	}));
-	// route for signing in. authenticates with passport local strategy 'local-signin'
-	app.post('/user/signin', passport.authenticate('local-signin', {
-		successRedirect: '/',
-		failureRedirect: '/signin'
-	}));
-	// route for signing in as guest.
-	app.post('/user/guest', passport.authenticate('local-signin', {
-		successRedirect: '/',
-		failureRedirect: '/signin'
-	}));
-	// app.post('/user/guest', passport.authenticate('local-signup', {
-	// 	successRedirect: '/',
-	// 	failureRedirect: '/signin'
-	// }));
-
-	// route for letting users save articles
+	// api post route for letting users save articles
 	app.post('/save', (req, res) => {
 		// early return if there's no user logged in
 		if (!req.user) {
@@ -99,14 +94,9 @@ module.exports = (app, passport) => {
 			console.log('Cannot save aritcle - No user logged in.');
 			return res.send('Cannot save aritcle - No user logged in.');
 		}
-		let articleId = req.body._id;
-		let userId = req.user._id;
-		// builds promise chain
-		const promise1 = User.update({_id: userId}, { $pull: { saved_articles: articleId }}).exec();
-		const promise2 = Article.update({_id: articleId}, { $pull: { savers: req.user.username }}).exec();
-		console.log('UNSAVING ARTICLE ' + articleId + '...');
+		console.log('UNSAVING ARTICLE ' + req.body._id + '...');
 		// calls promise chain through Promise.all()
-		Promise.all([promise1, promise2]).then(data => {
+		articleSaver.db.unsaveArticle(req.user.username, req.body._id).then(data => {
 			console.log('ARTICLE SUCCESSFULLY UNSAVED.');
 			res.send('Article successfully unsaved.');
 		}).catch(err => {
@@ -122,12 +112,13 @@ module.exports = (app, passport) => {
 			console.log('CANNOT RETRIEVE SAVED ARTICLES. NO USER LOGGED IN.');
 			return res.send('Cannot retrieve saved articles. No user logged in.');
 		}
-		User.findById(req.user._id).populate('saved_articles').exec().then(thisUser => {
-			console.log('RESULTS FOUND! NUMBER OF SAVED ARTICLES: ' + thisUser.saved_articles.length);
+		console.log('GETTING SAVED ARTICLES FROM DATABASE FOR USER ' + req.user.username + '...')
+		articleSaver.db.getAllSaved(req.user._id).then(saved_articles => {
+			console.log('RESULTS FOUND! NUMBER OF SAVED ARTICLES: ' + saved_articles.length);
 			console.log('SENDING ARTICLES BACK TO USER...');
 			res.json({
-				results: thisUser.saved_articles,
-				responseMsg: "Number of Articles Found: " + thisUser.saved_articles.length
+				results: saved_articles,
+				responseMsg: "Number of Articles Found: " + saved_articles.length
 			});
 		}).catch((err) => {
 			console.log('SERVER ERROR: UNABLE TO LOCATE SAVED ARTICLES.');
@@ -146,7 +137,6 @@ module.exports = (app, passport) => {
 			return res.send('Cannot retrieved most saved articles. No user logged in.');
 		}
 		articleSaver.db.getMostSaved().then(results => {
-			console.log(results);
 			res.json({
 				results: results,
 				responseMsg: "Results found!"
@@ -168,7 +158,6 @@ module.exports = (app, passport) => {
 			return res.send('Cannot retrieved most commented articles. No user logged in.');
 		}
 		articleSaver.db.getMostCommented().then(results => {
-			console.log(results);
 			res.json({
 				results: results,
 				responseMsg: "Results found!"
@@ -180,16 +169,16 @@ module.exports = (app, passport) => {
 				results: [],
 				responseMsg: "Server error: Unable to locate most commented articles."
 			});
-		});			
+		});	
 	}); // end of app.get('articles/mostcommented')
-	// get route for retrieving article data in json
+	// get route for retrieving individual article data in json
 	app.get('/articles/:id', (req, res) => {
 		// early returns if no user exists in session
 		if (!req.user) {
 			console.log('CANNOT RETRIEVE ARTICLE DATA. NO USER LOGGED IN.');
 			return res.send('Cannot retrieve article data. No user logged in.');
 		}
-		Article.findById(req.params.id).populate('comments').populate('user').exec().then(article => {
+		articleSaver.db.getArticleData(req.params.id).then(article => {
 			if (!article) {
 				return res.send('No article found by id: ' + req.params.id);
 			}

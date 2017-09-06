@@ -201,6 +201,13 @@ const articleSaver = {
 				});
 			});
 		}, // end of articleSaver.db.saveArticle
+		unsaveArticle: (username, articleId) => {
+			// builds promise chain
+			const promise1 = User.update({username}, { $pull: { saved_articles: articleId }}).exec();
+			const promise2 = Article.update({_id: articleId}, { $pull: { savers: username }}).exec();
+			// returns promise chain through Promise.all()
+			return Promise.all([promise1, promise2]);
+		},
 		saveComment: (commentContent) => {
 			return new Promise ( (resolve, reject) => {
 				// creates new Comment instance
@@ -232,7 +239,31 @@ const articleSaver = {
 				}); // end of promise chain
 			}); // end of returned promise
 		},
+		// helper function for grabbing article data
+		getArticleData: (articleId) => {
+			// returns promise
+			return Article.findById(articleId).populate('comments').exec();
+		},		
+		// helper method for getting the all saved articles for a given user
+		getAllSaved: (userId) => {
+			// returns promise that resolves with populated saved_articles array
+			return new Promise ( (resolve, reject) => {
+				User.findById(userId)
+				.populate('saved_articles')
+				.exec()
+				.then(thisUser => {
+					resolve(thisUser.saved_articles);
+				}).catch(err => {
+					reject(err);
+				});
+			});
+		},
+		// helper method for getting the five most-saved articles, in descending order
 		getMostSaved: () => {
+			// returns promise. uses aggregate() because find() won't be able to obtain
+			// the length of the array "savers". numOfSaves is an alias given to the 
+			// projected value of the $size (length) of "savers" array. 1 values
+			// tells the query to also return these fields as well.
 			return Article.aggregate()
 				.project({
 					headline: 1, link: 1, by: 1, date: 1, thumbnail: 1, summary: 1,
@@ -241,7 +272,12 @@ const articleSaver = {
 				.limit(5)
 				.exec();
 		},
+		// helper method for getting the five most-commented articles, in descending order
 		getMostCommented: () => {
+			// returns promise. uses aggregate() because find() won't be able to obtain
+			// the length of the array "comments". numOfSaves is an alias given to the 
+			// projected value of the $size (length) of "comments" array. 1 values
+			// tells the query to also return these fields as well.
 			return Article.aggregate()
 				.project({
 					headline: 1, link: 1, by: 1, date: 1, thumbnail: 1, summary: 1,
