@@ -1,7 +1,6 @@
-// importing database models (mongoose)
-const Article = require('../models/Article.js'),
-	Comment = require('../models/Comment.js'),
-	User = require('../models/User.js');
+// imports article-saver helper (ASH) functions 
+const ash = require('../helpers/article-saver.js');
+
 // exports html-routes as function which takes in app paramater
 module.exports = (app) => {
 	// route for index. if not signed in, redirect to signin page
@@ -50,7 +49,7 @@ module.exports = (app) => {
 			return res.redirect('/signin');
 		}
 		// verifying aritcle exists before rendering
-		Article.findById(req.params.id).populate('comments').exec().then(article => {
+		ash.db.getArticleData(req.params.id).then(article => {
 			if (!article) {
 				return res.send('No article found by id: ' + req.params.id);
 			}

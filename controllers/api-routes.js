@@ -1,5 +1,5 @@
-// dependencies: articleSaver helper functions
-const articleSaver = require('../helpers/article-saver.js');
+// imports article-saver helper (ASH) functions 
+const ash = require('../helpers/article-saver.js');
 
 // exports as function which takes in app as parameter
 module.exports = (app, passport) => {
@@ -37,16 +37,16 @@ module.exports = (app, passport) => {
 		console.log('User searched: "' + queryStr + '"');
 		// sends query string to helper function searching nytimes,
 		// which returns a promise with results in the callback
-		articleSaver.nytimes.search(queryStr).then((results) => {
+		ash.nytimes.search(queryStr).then((results) => {
 			// if no results, break promise chain by throwing error message
 			if (!results || !results.length) {
 				throw 'NO RESULTS WERE FOUND FOR USER SEARCH';
 			}
 			console.log('RESULTS FOUND! NUMBER OF ARTICLES: ' + results.length);
 			console.log('SYNCING ARTICLES WITH THE DATABASE...');
-			// return articleSaver.db.sync to process scraped articles and return them 
+			// return ash.db.sync to process scraped articles and return them 
 			// in a form that is synced with the mongoose database
-			return articleSaver.db.sync(results);
+			return ash.db.sync(results);
 		}).then((articles) => {
 			console.log('SYNCING COMPLETE! SENDING ARTICLES TO USER.');
 			res.json({results: articles, responseMsg: "Number of Articles Found: " + articles.length});
@@ -73,7 +73,7 @@ module.exports = (app, passport) => {
 		// instantiates temp variables for building update arguments
 		let articleId = req.body._id;
 		console.log('SAVING ARTICLE ' + articleId + '...');
-		articleSaver.db.saveArticle(req.user.username, articleId).then(data => {
+		ash.db.saveArticle(req.user.username, articleId).then(data => {
 			// early returns & sends message to user if article has already been saved
 			if (!data.success) {
 				console.log('ARTICLE ALREADY EXISTS AMONG SAVED ARTICLES.')
@@ -96,7 +96,7 @@ module.exports = (app, passport) => {
 		}
 		console.log('UNSAVING ARTICLE ' + req.body._id + '...');
 		// calls promise chain through Promise.all()
-		articleSaver.db.unsaveArticle(req.user.username, req.body._id).then(data => {
+		ash.db.unsaveArticle(req.user.username, req.body._id).then(data => {
 			console.log('ARTICLE SUCCESSFULLY UNSAVED.');
 			res.send('Article successfully unsaved.');
 		}).catch(err => {
@@ -113,7 +113,7 @@ module.exports = (app, passport) => {
 			return res.send('Cannot retrieve saved articles. No user logged in.');
 		}
 		console.log('GETTING SAVED ARTICLES FROM DATABASE FOR USER ' + req.user.username + '...')
-		articleSaver.db.getAllSaved(req.user._id).then(saved_articles => {
+		ash.db.getAllSaved(req.user._id).then(saved_articles => {
 			console.log('RESULTS FOUND! NUMBER OF SAVED ARTICLES: ' + saved_articles.length);
 			console.log('SENDING ARTICLES BACK TO USER...');
 			res.json({
@@ -136,7 +136,7 @@ module.exports = (app, passport) => {
 			console.log('CANNOT RETRIEVE MOST SAVED ARTICLES. NO USER LOGGED IN.');
 			return res.send('Cannot retrieved most saved articles. No user logged in.');
 		}
-		articleSaver.db.getMostSaved().then(results => {
+		ash.db.getMostSaved().then(results => {
 			res.json({
 				results: results,
 				responseMsg: "Results found!"
@@ -157,7 +157,7 @@ module.exports = (app, passport) => {
 			console.log('CANNOT RETRIEVE MOST COMMENTED ARTICLES. NO USER LOGGED IN.');
 			return res.send('Cannot retrieved most commented articles. No user logged in.');
 		}
-		articleSaver.db.getMostCommented().then(results => {
+		ash.db.getMostCommented().then(results => {
 			res.json({
 				results: results,
 				responseMsg: "Results found!"
@@ -178,7 +178,7 @@ module.exports = (app, passport) => {
 			console.log('CANNOT RETRIEVE ARTICLE DATA. NO USER LOGGED IN.');
 			return res.send('Cannot retrieve article data. No user logged in.');
 		}
-		articleSaver.db.getArticleData(req.params.id).then(article => {
+		ash.db.getArticleData(req.params.id).then(article => {
 			if (!article) {
 				return res.send('No article found by id: ' + req.params.id);
 			}
@@ -203,7 +203,7 @@ module.exports = (app, passport) => {
 			article: req.params.id
 		};
 		console.log('ATTEMPTING TO POST NEW COMMENT...');
-		articleSaver.db.saveComment(commentContent).then(data => {
+		ash.db.saveComment(commentContent).then(data => {
 			console.log("PROCESS COMPLETE! REDIRECTING TO SAVEDARTICLES...");
 			res.redirect('back');
 		}).catch((err) => {

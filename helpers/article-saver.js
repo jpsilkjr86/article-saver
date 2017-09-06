@@ -8,8 +8,8 @@ const Article = require('../models/Article.js'),
 	Comment = require('../models/Comment.js'),
 	User = require('../models/User.js');
 
-// declares object to be exported
-const articleSaver = {
+// declares object to be exported (article saver helper = ash)
+const ash = {
 	// phantom helper object
 	phantom: {
 		// phantom getHTML helper function
@@ -32,7 +32,7 @@ const articleSaver = {
 					return page.open(url);
 				}).then(function() {
 					// checks to make sure the document is ready before evaluating its html
-					return articleSaver.phantom.onReadyState(sitepage);
+					return ash.phantom.onReadyState(sitepage);
 				}).then(function(){
 					// evaluates the site page and returns its html
 					return sitepage.evaluate(function() {
@@ -99,8 +99,8 @@ const articleSaver = {
 				// calls checkReady
 				checkReady(page);
 			}); // end of Promise
-		} // end of articleSaver.phantom.onReadyState()
-	}, // end of articleSaver.phantom sub-object
+		} // end of ash.phantom.onReadyState()
+	}, // end of ash.phantom sub-object
 	// nytimes sub-object
 	nytimes: {
 		// function for searching nytimes
@@ -114,7 +114,7 @@ const articleSaver = {
 					+ '/30days/document_type%3A%22article%22/';
 				// calls helper function to grab html from phantom instance.
 				// similar to request but more powerful in that it can wait for dynamic content to load.
-				articleSaver.phantom.getHTML(nytQueryUrl).then(function(html){
+				ash.phantom.getHTML(nytQueryUrl).then(function(html){
 					// instantiates locally-scoped results array, to be returned in resolve later
 					const results = [];
 					// loads HTML into cheerio and saves it as a variable
@@ -140,8 +140,8 @@ const articleSaver = {
 					reject(error);
 				});
 			}); // end of Promise
-		} // end of articleSaver.nytimes.search
-	}, // end of articleSaver.nytimes
+		} // end of ash.nytimes.search
+	}, // end of ash.nytimes
 	// sub-object for housing database helper functions
 	db: {
 		// function for syncing articles with database
@@ -177,7 +177,7 @@ const articleSaver = {
 			} // end of for-loop
 			// returns Promise.all of upsertArticlePromises array
 			return Promise.all(upsertArticlePromises);
-		}, // end of articleSaver.db.sync
+		}, // end of ash.db.sync
 		saveArticle: (username, articleId) => {
 			return new Promise ( (resolve, reject) => {
 				// instantiates temp variables for building update arguments
@@ -200,7 +200,7 @@ const articleSaver = {
 					reject(err);
 				});
 			});
-		}, // end of articleSaver.db.saveArticle
+		}, // end of ash.db.saveArticle
 		unsaveArticle: (username, articleId) => {
 			// builds promise chain
 			const promise1 = User.update({username}, { $pull: { saved_articles: articleId }}).exec();
@@ -229,7 +229,7 @@ const articleSaver = {
 						newComment.save(),
 						article.save(),
 						user.save(),
-						articleSaver.db.saveArticle(newComment.author, newComment.article)
+						ash.db.saveArticle(newComment.author, newComment.article)
 					]);
 				}).then(data => {
 					console.log("process complete");
@@ -286,7 +286,7 @@ const articleSaver = {
 				.limit(5)
 				.exec();
 		}
-	} // end of articleSaver.db sub-object
-}; // end of articleSaver
+	} // end of ash.db sub-object
+}; // end of ash
 
-module.exports = articleSaver;
+module.exports = ash;
